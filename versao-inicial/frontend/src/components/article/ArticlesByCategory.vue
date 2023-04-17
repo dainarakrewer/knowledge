@@ -3,7 +3,7 @@
       <PageTitle icon="fa fa-folder-o" :main="category.name" sub="Categoria" />
       <ul>
           <li v-for="article in articles" :key="article.id">
-              {{ article.name }}
+              <ArticleItem :article="article" />
           </li>
       </ul>
       <div class="load-more">
@@ -17,10 +17,11 @@
 import {baseApiUrl} from "@/global";
 import axios from "axios"
 import PageTitle from "@/components/template/PageTitle.vue";
+import ArticleItem from "@/components/article/ArticleItem.vue";
 
 export default {
     name: "ArticlesByCategory",
-    components: {PageTitle},
+    components: {PageTitle, ArticleItem},
     data: function () {
         return {
             category: {},
@@ -42,6 +43,17 @@ export default {
 
                 if(res.data.length === 0) this.loadMore = false
             })
+        }
+    },
+    watch: {
+        $route(to) {
+            this.category.id = to.params.id
+            this.articles = []
+            this.page = 1
+            this.loadMore = true
+
+            this.getCategory()
+            this.getArticles()
         }
     },
     mounted() {
